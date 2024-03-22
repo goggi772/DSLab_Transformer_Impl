@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 class Residual_Norm_Layer(nn.Module):
-    def __init__(self, dim, dropout=0.5):
+    def __init__(self, hidden_dim, dropout=0.5):
         super(Residual_Norm_Layer, self).__init__()
         
-        self.layer = nn.LayerNorm(dim)  # layer normalization
+        self.layer = nn.LayerNorm(hidden_dim)  # layer normalization
         self.dropout = nn.Dropout(dropout)
         
     def forward(self, x, sublayer):
