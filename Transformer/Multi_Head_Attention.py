@@ -28,9 +28,13 @@ class Multi_Head_Attention(nn.Module):
         Key = self.Key_Weight(Key)
         Value = self.Value_Weight(Value)
         
-        Query = Query.view(batch_size, -1, self.heads_n, self.head_dim).transpose(1, 2)     # Q, K, V의 shape을 n개의 헤드수로 쪼개 [배치사이즈, 헤드 수, 시퀀스 길이, 전체 차원]으로 변경
-        Key = Key.view(batch_size, -1, self.heads_n, self.head_dim).transpose(1, 2)
-        Value = Value.view(batch_size, -1, self.heads_n, self.head_dim).transpose(1, 2)
+        Query = Query.view(batch_size, -1, self.heads_n, self.head_dim)     # Q, K, V의 shape을 n개의 헤드수로 쪼개 [배치사이즈, 시퀀스 길이, 헤드 수, 전체 차원]으로 변경
+        Key = Key.view(batch_size, -1, self.heads_n, self.head_dim)
+        Value = Value.view(batch_size, -1, self.heads_n, self.head_dim)
+        
+        Query = Query.transpose(1, 2)   # [배치사이즈, 헤드 수, 시퀀스 길이, 전체 차원]
+        Key = Key.transpose(1, 2)
+        Value = Value.transpose(1, 2)
         
         output, score = self.attention(Query, Key, Value, mask)     # n개의 head수로 나눠진 Q, K, V 텐서를 scaled dot product attention을 함
         
