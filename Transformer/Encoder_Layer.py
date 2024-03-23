@@ -20,13 +20,13 @@ class Encoder_Layer(nn.Module):         # 하나의 encoder layer 구현
         
         self.dropout = nn.Dropout(dropout)
         
-    def forward(self, x, x_mask):
-        next_x, score = self.attention(x, x, x, x_mask)     # 인자 x는 순서대로 Query, Key, Value를 의미(x_mask는 mask여부)
-        x = self.residual_norm1(x, next_x)  # residual connection, layer norm한 결과
+    def forward(self, src, src_mask):
+        next_src, score = self.attention(src, src, src, src_mask)     # 인자 x는 순서대로 Query, Key, Value를 의미(x_mask는 mask여부)
+        src = self.residual_norm1(src, next_src)  # residual connection, layer norm한 결과
         
-        next_x = self.FFN(x)
-        x = self.residual_norm2(x, next_x)
+        next_src = self.FFN(src)
+        src = self.residual_norm2(src, next_src)
         
-        return x, score
+        return src, score
     
         

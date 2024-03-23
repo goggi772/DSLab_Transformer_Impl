@@ -16,11 +16,11 @@ class Encoder(nn.Module):
         
         self.encoder_layers = nn.ModuleList([Encoder_Layer(head_n, hidden_dim, ffn_dim, dropout) for _ in range(layer_n)]) # layer_n의 값에 따라 encoder layer가 쌓임
         
-    def forward(self, x, x_mask):
-        x = self.embedding(x)
-        x = self.p_encoding(x)
+    def forward(self, src, src_mask):
+        src = self.embedding(src)
+        src = self.p_encoding(src)
         
         for encoder_layer in self.encoder_layers:
-            x, score = encoder_layer(x, x_mask)
+            src, score = encoder_layer(src, src_mask)
             
-        return x, score
+        return src, score

@@ -24,15 +24,15 @@ class Multi_Head_Attention(nn.Module):
     def forward(self, Query, Key, Value, mask=None):
         batch_size = Query.shape[0]     # 입력 데이터의 첫번째 크기가 batch size이므로 Query의 shape[0]으로 batch size설정
         
-        Query = self.Query_Weight(Query)    # 원래 Q, K, V의 shape은 [배치사이즈, 시퀀스 길이, 전체 차원]
+        Query = self.Query_Weight(Query)    # 원래 Q, K, V의 shape은 [batch size, seq length, hidden dim]
         Key = self.Key_Weight(Key)
         Value = self.Value_Weight(Value)
         
-        Query = Query.view(batch_size, -1, self.heads_n, self.head_dim)     # Q, K, V의 shape을 n개의 헤드수로 쪼개 [배치사이즈, 시퀀스 길이, 헤드 수, 전체 차원]으로 변경
+        Query = Query.view(batch_size, -1, self.heads_n, self.head_dim)     # Q, K, V의 shape을 n개의 헤드수로 쪼개 [batch size, seq length, the number of head, hidden dim]으로 변경
         Key = Key.view(batch_size, -1, self.heads_n, self.head_dim)
         Value = Value.view(batch_size, -1, self.heads_n, self.head_dim)
         
-        Query = Query.transpose(1, 2)   # [배치사이즈, 헤드 수, 시퀀스 길이, 전체 차원]
+        Query = Query.transpose(1, 2)   # [batch size, the number of head, seq length, hidden dim]
         Key = Key.transpose(1, 2)
         Value = Value.transpose(1, 2)
         
@@ -40,7 +40,7 @@ class Multi_Head_Attention(nn.Module):
         
         output = self.dropout(output)
         
-        output = output.transpose(1, 2).contiguous.view(batch_size, -1, self.heads_n * self.head_dim)   # Multihead를 다시 원래대로 바꿈 [배치사이즈, 시퀀스 길이, 전체차원]
+        output = output.transpose(1, 2).contiguous.view(batch_size, -1, self.heads_n * self.head_dim)   # Multihead를 다시 원래대로 바꿈 [batch size, seq length, 전체차원]
         
         output = self.O_Weight(output)
         

@@ -14,7 +14,7 @@ class Positional_Encoding(nn.Module):
         
         
     def forward(self, x):
-        seq_len = x.shape[1]    # 데이터 x -> [배치 사이즈, 시퀀스 길이, 전체 차원]
+        seq_len = x.shape[1]    # 데이터 x -> [batch size, seq length, hidden dim]
         return x + self.encoding[:seq_len, :]   # 입력된 시퀀스의 길이만큼만 encoding에서 가져와 더함
         
         

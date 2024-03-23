@@ -22,15 +22,21 @@ class Decoder_Layer(nn.Module):
         self.FFN = Position_Wise_FeedForward_Networks(hidden_dim, ffn_dim, dropout)
         self.residual_norm3 = Residual_Norm_Layer(hidden_dim, dropout)
         
-    def forward(self, x, target, x_mask, target_mask):
-        next_target, _ = self.masked_attention(target, target, target, target_mask)     # input embedding으로부터 Query, Key, Value 받음
-        target = self.residual_norm1(target, next_target)
+    def forward(self, src, trg, src_mask, trg_mask):
         
-        next_target, score = self.attention(target, x, x, x_mask)       # Encoder로부터 Key, Value(x, x)를 받고 Masked Multi Head Attention으로부터 Query를(target) 입력받음
-        target = self.residual_norm2(target, next_target)
+        #trg = [batch size, trg len, hid dim]
+        #src = [batch size, src len, hid dim]
+        #trg_mask = [batch size, 1, trg len, trg len]
+        #src_mask = [batch size, 1, 1, src len]
         
-        next_target = self.FFN(target)
-        target = self.residual_norm3(target, next_target)
+        next_trg, _ = self.masked_attention(trg, trg, trg, trg_mask)     # input embedding으로부터 Query, Key, Value 받음
+        trg = self.residual_norm1(trg, next_trg)
         
-        return target, score
+        next_trg, score = self.attention(trg, src, src, src_mask)       # Encoder로부터 Key, Value(src, src)를 받고 Masked Multi Head Attention으로부터 Query를(trg) 입력받음
+        trg = self.residual_norm2(trg, next_trg)
+        
+        next_trg = self.FFN(trg)
+        trg = self.residual_norm3(trg, next_trg)
+        
+        return trg, score
         
